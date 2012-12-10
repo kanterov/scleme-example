@@ -1,0 +1,58 @@
+(define length
+  (lambda (list0)
+    (let 
+    	([list (typed list0 "List[_]")])
+	    (.size list))))
+
+(define subseq2
+  (lambda (list0 from0)
+    (let
+      ([list (typed list0 "List[_]")
+        from (typed from0 "Int")])
+  	  (.drop list from))))
+
+(define subseq3
+  (lambda (list0 from0 n0)
+    (let
+      ([list (typed list0 "List[_]")
+        from (typed from0 "Int")
+        n    (typed n0 "Int")])
+      (.drop (.take list n) from))))
+
+(define car
+  (lambda (seq0)
+    (let
+      ([seq (typed seq0 "Seq[_]")])
+      (.head seq))))
+
+(define cdr
+  (lambda (seq0)
+    (let
+      ([seq (typed seq0 "Seq[_]")])
+      (.tail seq))))
+
+(define cons
+  (lambda (a b)
+    (scala "REF(\"Core\") DOT \"cons(a,b)\"")))
+
+(define msort
+  (lambda (list)
+    (if (<= (length list) 1)
+      list
+      (begin
+        (define split (/ (length list) 2))
+        (merge
+          (msort (subseq3 list 0 split))
+          (msort (subseq2 list split)))))))
+
+(define merge
+  (lambda (a b)
+    (if (< (length a) 1)
+      b
+      (if (< (length b) 1)
+        a
+        (if (< (car a) (car b))
+          (cons (car a) (merge (cdr a) b))
+          (cons (car b) (merge a (cdr b))))))))
+          
+(msort '(3 1 2))
